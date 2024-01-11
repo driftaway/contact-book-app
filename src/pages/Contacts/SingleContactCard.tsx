@@ -56,7 +56,7 @@ const SingleContactCard = () => {
       state,
       postcode 
     } 
-  } = useMemo(() => users && users?.find(({ login: { uuid }}) => uuid === user), [user]) as UserInfo || null
+  } = useMemo(() => users && users?.find(({ login: { uuid }}) => uuid === user), [user]) as UserInfo
   
   return (
     <div className='contacts__wrapper-single-user'>

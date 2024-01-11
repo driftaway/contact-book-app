@@ -10,9 +10,7 @@ const ROUTES = [
 const TopBar = () => {
   return (
     <Routes>
-      {ROUTES.map(({ path, component }) => (
-          <Route key={path} path={path} element={component} />
-          ))}
+      {ROUTES.map(({ path, component }) => <Route key={path} path={path} element={component} />)}
     </Routes>
   )
 }

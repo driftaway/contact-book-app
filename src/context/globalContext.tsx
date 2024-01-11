@@ -1,18 +1,25 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, {
+import axios from 'axios'
+import {
   createContext,
   ReactElement,
   useContext,
   useState,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from 'react'
 
 const defaultState = {
   user: null,
   setUser: () => {},
   users: [],
-  setUsers: () => {}
+  setUsers: () => {},
+  selectedNationalities: [],
+  setSelectedNationalities: () => {},
+  isFetching: false,
+  setIsFetching: () => {},
+  handleFetchUsers: () => {}
 }
 
 interface DefaultState {
@@ -20,6 +27,11 @@ interface DefaultState {
   setUser: Dispatch<SetStateAction<null | string>>
   users: UserInfo[] | []
   setUsers: Dispatch<SetStateAction<UserInfo[] | []>>
+  selectedNationalities: string[]
+  setSelectedNationalities: Dispatch<SetStateAction<string[] | []>>
+  isFetching: boolean
+  setIsFetching: Dispatch<SetStateAction<boolean>>
+  handleFetchUsers: Dispatch<boolean>
 }
 
 const GlobalContext = createContext<DefaultState>(defaultState)
@@ -66,15 +78,63 @@ interface UserInfo {
   registered: { date: string, age: number }
 }
 
+interface PromiseInfo {
+  page: number
+  results: number
+  seed: string
+  version: string
+}
+
+interface FetchUserPromise {
+  data: {
+    results: UserInfo[] | []
+    info: PromiseInfo
+  }
+}
+
+interface QueryPayload {
+  nat: string[] | undefined
+  results: number
+}
+
 export const GlobalContextProvider = ({ children }: ChildrenType) => {
   const [users, setUsers] = useState<UserInfo[] | []>([])
   const [user, setUser] = useState<null | string>(null)
+  const [selectedNationalities, setSelectedNationalities] = useState<string[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(false)
+
+  const handleFetchUsers = async (isScrolling: boolean) => {
+    setIsFetching(true)
+    try {
+      const payload = {
+        results: 50,
+        nat: selectedNationalities?.length ? selectedNationalities : undefined
+      }
+
+      const query = Object.keys(payload).map((key: string) => payload[key as keyof QueryPayload] && key + '=' + payload[key as keyof QueryPayload])?.join('&');
+      const { data: { results }} = (await axios.get(`https://randomuser.me/api?` + query)) as Awaited<Promise<FetchUserPromise>>
+      !isScrolling && setUser(null)
+      results?.length && setUsers((current: UserInfo[]) => isScrolling ? [...current, ...results] : results)
+      setIsFetching(false)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    handleFetchUsers(false)
+  }, [selectedNationalities])
 
   const props = {
     user,
     setUser,
     users, 
-    setUsers
+    setUsers,
+    selectedNationalities,
+    setSelectedNationalities,
+    isFetching,
+    setIsFetching,
+    handleFetchUsers
   }
 
   return <GlobalContext.Provider value={props}>{children}</GlobalContext.Provider>
