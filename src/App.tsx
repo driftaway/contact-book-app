@@ -1,11 +1,14 @@
 import React from 'react';
 import { GlobalContextProvider } from './context/globalContext';
-import Home from './pages/Home';
+import Home from './components/Home';
+import { BrowserRouter } from 'react-router-dom';
 
 const App = () => {
   return (
     <GlobalContextProvider>
-      <Home />
+      <BrowserRouter>
+        <Home />
+      </BrowserRouter>
     </GlobalContextProvider>
   );
 }

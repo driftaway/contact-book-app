@@ -7,6 +7,7 @@ const Home = () => {
   return (
     <div className='home'>
       <LeftMenu />
+      
       <TopBar />
     </div>
   )

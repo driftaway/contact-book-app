@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 import { People, Settings } from '@mui/icons-material'
 
 const MENU_ITEMS = [
-  { name: 'Contacts', slug: 'contacts', muiIcon: <People />, },
+  { name: 'Contacts', slug: '', muiIcon: <People />, },
   { name: 'Settings', slug: 'settings', muiIcon: <Settings />, },
 ]
 

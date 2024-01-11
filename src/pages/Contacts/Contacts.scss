@@ -1,4 +1,115 @@
 .contacts {
   width: calc(100% - 300px);
   background-color: #eee;//#f1f5f9;
+
+  &__wrapper {
+    display: flex;
+    height: calc(100vh - 80.5px);
+
+    &-single-user {
+      padding: 30px 35px;
+      width: calc(50% - 70px);
+      position: relative;
+
+      &-basic {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        word-break: break-word;
+
+        > div:not(.contacts__wrapper-single-user-details-phone) {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          > span {
+            font-size: 19px;
+            font-weight: 600;
+          }
+        }
+      }
+
+      &-close {
+        position: absolute !important;
+        right: 0 !important;
+        top: 0 !important;
+        border-radius: 0 !important;
+        color: #000 !important;
+        font-size: 36px !important;
+
+        > svg {
+          width: 1.4em !important;
+          height: 1.4em !important;
+        }
+
+        &:hover {
+          background-color: hsla(0, 0%, 0%, 0.05);
+        }
+      }
+
+      &-details {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        &-phone {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          > div {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            > span {
+              font-size: 19px;
+              font-weight: 600;
+            }
+          }
+
+          @media (max-width: 1280px) {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 15px;
+          }
+        }
+      }
+    }
+
+    &-list {
+      overflow: auto;
+      height: 100%;
+      // min-width: 50%;
+      width: 50%;
+
+      &-item {
+        padding: 25px 30px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+        display: flex;
+        gap: 20px;
+        transition: all 0.22s ease;
+        transition-property: background-color;
+
+
+        &.active {
+          // padding: 25px 30px;
+          padding-left: 27px;
+          border-left: 3px solid rgb(55, 48, 163);
+          background-color: rgb(179, 201, 244);
+        }
+
+        &-details {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        &:hover:not(.active) {
+          background-color: #d1dbef8c;
+        }
+      }
+    }
+  }
 }
