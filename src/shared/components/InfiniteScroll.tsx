@@ -1,35 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { debounce } from '@mui/material'
-import React, { useEffect, useRef } from 'react'
+// import { debounce } from '@mui/material'
+import { useEffect, useRef } from 'react'
+import { useGlobalState } from '../../context/globalContext'
+import { Button } from '@mui/material'
 
 interface Props {
   readonly children?: any
-  readonly hasMore?: boolean
   readonly reverse?: boolean
   readonly threshold?: number
   readonly onLoadMore?: any
   readonly rootSentinelRef?: any
-  readonly canLoadMore?: boolean
-  readonly isFetching: boolean
 }
 
 const InfiniteScroll = ({
   children,
-  hasMore,
   reverse = false,
-  threshold = 0.9,
-  onLoadMore,
+  threshold = 0,
   rootSentinelRef,
-  canLoadMore,
-  isFetching,
 }: Props) => {
+  const { 
+    users, 
+    isFetching, 
+    handleFetchUsers, 
+    search, 
+    setShouldShowPrefetched 
+  } = useGlobalState()
   const tergetSentinelRef = useRef<any>()
   useEffect(() => {
     const rootSentinel = rootSentinelRef?.current
     const targetSentinel = tergetSentinelRef?.current
     const observer = new IntersectionObserver(
       async ([entry]) => {
-        entry.isIntersecting && canLoadMore && !isFetching && onLoadMore()
+        const parentHeight = rootSentinelRef?.current?.clientHeight
+        let childrenHeight = 0
+        rootSentinelRef?.current && Array?.from(rootSentinelRef?.current?.children)?.forEach(
+          (child: any) => (childrenHeight = childrenHeight + child?.clientHeight),
+        )
+        const isIntersecting = !(childrenHeight >= 50 && (parentHeight > childrenHeight))
+
+        if (!isIntersecting) return false
+
+        if (
+          entry.isIntersecting && 
+          users?.length > 0 && 
+          users?.length < 1000 && 
+          !isFetching
+        ) {
+          setShouldShowPrefetched(true)
+          handleFetchUsers(true)
+        }
       },
       {
         root: rootSentinel,
@@ -38,48 +57,50 @@ const InfiniteScroll = ({
     )
     targetSentinel && observer.observe(targetSentinel)
     return () => targetSentinel && observer.unobserve(targetSentinel)
-  }, [threshold, hasMore, onLoadMore])
+  }, [threshold, users, isFetching])
 
-
-  const scrollhandler = debounce(async () => {
-    console.log(123)
-  }, 500)
-
-  useEffect(() => {
-    rootSentinelRef?.current?.addEventListener('scroll', scrollhandler)
-
-    return () => {
-      rootSentinelRef?.current?.removeEventListener('scroll', scrollhandler)
-    }
-  }, [children])
   return (
-    <div
-      ref={rootSentinelRef}
-      className='infinite-scroll'
-      style={{
-        height: '100%',
-        width: '100%',
-        overflow: 'auto',
-        ...(reverse && {
+    <>
+      <div
+        ref={rootSentinelRef}
+        className='infinite-scroll'
+        style={{
+          position: 'relative',
           display: 'flex',
-          flexDirection: 'column-reverse',
-        }),
-      }}
-    >
-      {children}
-
-      {canLoadMore && (
-        <div
-          ref={tergetSentinelRef}
-          style={{
+          flexDirection: 'column',
+          height: '100%',
+          width: '100%',
+          overflow: 'auto',
+          ...(reverse && {
             display: 'flex',
-            minHeight: 50,
-            visibility: 'hidden',
-            marginBottom: '-200px',
-          }}
-        />
-      )}
-    </div>
+            flexDirection: 'column-reverse',
+          }),
+        }}
+      >
+        {children}
+
+        {users?.length < 1000 && (
+          <div
+            ref={tergetSentinelRef}
+            style={{
+              display: 'flex',
+              minHeight: 50,
+              visibility: 'hidden',
+            }}
+          />
+        )}
+
+        {users?.length < 1000 && search?.length ? 
+          <Button
+            disabled={isFetching}
+            onClick={() => handleFetchUsers(true)}
+            style={{ marginTop: '-50px', textTransform: 'capitalize' }}
+          >
+            Load more users
+          </Button> 
+        : null}
+      </div>
+    </>
   )
 }
 

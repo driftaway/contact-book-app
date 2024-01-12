@@ -19,7 +19,13 @@ const defaultState = {
   setSelectedNationalities: () => {},
   isFetching: false,
   setIsFetching: () => {},
-  handleFetchUsers: () => {}
+  handleFetchUsers: () => {},
+  search: '',
+  setSearch: () => {},
+  shouldPrefetch: true,
+  setShouldPrefetch: () => {},
+  shouldShowPrefetched: true,
+  setShouldShowPrefetched: () => {},
 }
 
 interface DefaultState {
@@ -32,6 +38,12 @@ interface DefaultState {
   isFetching: boolean
   setIsFetching: Dispatch<SetStateAction<boolean>>
   handleFetchUsers: Dispatch<boolean>
+  search: string
+  setSearch: Dispatch<string>
+  shouldPrefetch: boolean
+  setShouldPrefetch: Dispatch<boolean>
+  shouldShowPrefetched: boolean
+  setShouldShowPrefetched: Dispatch<boolean>
 }
 
 const GlobalContext = createContext<DefaultState>(defaultState)
@@ -47,7 +59,8 @@ interface UserInfo {
   gender: string
   id: { name: string, value: string }
   location: { 
-    city: string, coordinates: { latitude: string, longitude: string },
+    city: string, 
+    coordinates: { latitude: string, longitude: string },
     country: string
     postcode: number
     state: string
@@ -100,29 +113,44 @@ interface QueryPayload {
 export const GlobalContextProvider = ({ children }: ChildrenType) => {
   const [users, setUsers] = useState<UserInfo[] | []>([])
   const [user, setUser] = useState<null | string>(null)
-  const [selectedNationalities, setSelectedNationalities] = useState<string[]>([]);
+  const storageData = JSON.parse(localStorage.getItem('nationalities') as string)
+  const [selectedNationalities, setSelectedNationalities] = useState<string[]>(storageData || []);
   const [isFetching, setIsFetching] = useState<boolean>(false)
-
+  const [search, setSearch] = useState<string>('')
+  const [shouldPrefetch, setShouldPrefetch] = useState<boolean>(true)
+  const [shouldShowPrefetched, setShouldShowPrefetched] = useState<boolean>(false)
   const handleFetchUsers = async (isScrolling: boolean) => {
     setIsFetching(true)
     try {
       const payload = {
         results: 50,
-        nat: selectedNationalities?.length ? selectedNationalities : undefined
+        nat: selectedNationalities?.length ? selectedNationalities : null
       }
 
-      const query = Object.keys(payload).map((key: string) => payload[key as keyof QueryPayload] && key + '=' + payload[key as keyof QueryPayload])?.join('&');
+      const query = Object.keys(payload).map((key: string) => {
+        if (payload[key as keyof QueryPayload]) {
+          return key + '=' + payload[key as keyof QueryPayload]
+        }}
+      )?.join('&');
       const { data: { results }} = (await axios.get(`https://randomuser.me/api?` + query)) as Awaited<Promise<FetchUserPromise>>
       !isScrolling && setUser(null)
-      results?.length && setUsers((current: UserInfo[]) => isScrolling ? [...current, ...results] : results)
+      setUsers((current: UserInfo[]) => isScrolling ? [...current, ...results] : results)
       setIsFetching(false)
+      setShouldShowPrefetched(false)
+      setShouldPrefetch(false)
     } catch (err) {
       console.log(err)
     }
   }
 
   useEffect(() => {
+    shouldPrefetch && setTimeout(() => handleFetchUsers(true))
+  }, [shouldPrefetch])
+
+  useEffect(() => {
+    setShouldPrefetch(true)
     handleFetchUsers(false)
+    localStorage.setItem('nationalities', JSON.stringify(selectedNationalities))
   }, [selectedNationalities])
 
   const props = {
@@ -134,7 +162,13 @@ export const GlobalContextProvider = ({ children }: ChildrenType) => {
     setSelectedNationalities,
     isFetching,
     setIsFetching,
-    handleFetchUsers
+    handleFetchUsers,
+    search, 
+    setSearch,
+    shouldPrefetch, 
+    setShouldPrefetch,
+    shouldShowPrefetched,
+    setShouldShowPrefetched,
   }
 
   return <GlobalContext.Provider value={props}>{children}</GlobalContext.Provider>
