@@ -1,4 +1,3 @@
-// import { useState } from 'react'
 import PageHeader from '../../components/PageHeader'
 import { useGlobalState } from '../../context/globalContext'
 import './Settings.scss'

@@ -1,6 +1,6 @@
 .contacts {
   width: calc(100% - 300px);
-  background-color: #eee;//#f1f5f9;
+  background-color: #eee;
 
   &__wrapper {
     display: flex;
@@ -80,7 +80,6 @@
     &-list {
       overflow: auto;
       height: 100%;
-      // min-width: 50%;
       width: 50%;
 
       .end-warning {
@@ -90,7 +89,6 @@
 
         > div {
           color: #000000c9;
-          // font-size: 24px;
         }
       }
 
@@ -105,7 +103,6 @@
 
 
         &.active {
-          // padding: 25px 30px;
           padding-left: 27px;
           border-left: 3px solid rgb(55, 48, 163);
           background-color: rgb(179, 201, 244);

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import PageHeader from '../../components/PageHeader'
 import './Contacts.scss'
 import { Alert, Divider, InputAdornment, LinearProgress, TextField } from '@mui/material'
