@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { debounce } from '@mui/material'
-import { useEffect, useRef } from 'react'
+import { ReactNode, RefObject, useEffect, useRef } from 'react'
 import { useGlobalState } from '../../context/globalContext'
-import { Button } from '@mui/material'
+import { Alert, Button } from '@mui/material'
 
 interface Props {
-  readonly children?: any
-  readonly reverse?: boolean
+  readonly children?: ReactNode[]
   readonly threshold?: number
-  readonly onLoadMore?: any
-  readonly rootSentinelRef?: any
+  readonly rootSentinelRef?: null | RefObject<HTMLDivElement>
+  readonly totalResults: number
 }
 
 const InfiniteScroll = ({
   children,
-  reverse = false,
   threshold = 0,
+  totalResults,
   rootSentinelRef,
 }: Props) => {
   const { 
@@ -36,14 +35,14 @@ const InfiniteScroll = ({
         rootSentinelRef?.current && Array?.from(rootSentinelRef?.current?.children)?.forEach(
           (child: any) => (childrenHeight = childrenHeight + child?.clientHeight),
         )
-        const isIntersecting = !(childrenHeight >= 50 && (parentHeight > childrenHeight))
+        const isIntersecting = !(childrenHeight >= 50 && (parentHeight && parentHeight > childrenHeight))
 
         if (!isIntersecting) return false
 
         if (
           entry.isIntersecting && 
-          users?.length > 0 && 
-          users?.length < 1000 && 
+          totalResults > 0 && 
+          totalResults < 1000 && 
           !isFetching
         ) {
           setShouldShowPrefetched(true)
@@ -71,15 +70,11 @@ const InfiniteScroll = ({
           height: '100%',
           width: '100%',
           overflow: 'auto',
-          ...(reverse && {
-            display: 'flex',
-            flexDirection: 'column-reverse',
-          }),
         }}
       >
         {children}
 
-        {users?.length < 1000 && (
+        {totalResults < 1000 && (
           <div
             ref={tergetSentinelRef}
             style={{
@@ -90,7 +85,7 @@ const InfiniteScroll = ({
           />
         )}
 
-        {users?.length < 1000 && search?.length ? 
+        {totalResults < 1000 && search?.length ? 
           <Button
             disabled={isFetching}
             onClick={() => handleFetchUsers(true)}
@@ -99,6 +94,11 @@ const InfiniteScroll = ({
             Load more users
           </Button> 
         : null}
+
+        {totalResults === 1000 ? 
+          <Alert className='end-warning' severity='warning'>
+            End of users catalog.
+          </Alert>: null}
       </div>
     </>
   )

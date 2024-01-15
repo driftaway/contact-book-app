@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import PageHeader from '../../components/PageHeader'
 import './Contacts.scss'
-import { Alert, Divider, InputAdornment, LinearProgress, TextField } from '@mui/material'
+import { Divider, InputAdornment, LinearProgress, TextField } from '@mui/material'
 import { Search } from '@mui/icons-material'
 import InfiniteScroll from '../../shared/components/InfiniteScroll'
 import { useGlobalState } from '../../context/globalContext'
@@ -17,7 +17,7 @@ const Contacts = () => {
     setSearch,
     shouldShowPrefetched
   } = useGlobalState()
-  const rootSentinelRef = useRef<HTMLInputElement>(null)
+  const rootSentinelRef = useRef<HTMLDivElement>(null)
 
   const filteredUsers = () => {
     const prefetchUsers = shouldShowPrefetched ? users : [...users]?.slice(0, -50)
@@ -60,8 +60,7 @@ const Contacts = () => {
           <Divider />
 
           <div style={{ height: 'calc(100% - 84px)' }}>
-            <InfiniteScroll rootSentinelRef={rootSentinelRef}>
-              
+            <InfiniteScroll totalResults={users?.length} rootSentinelRef={rootSentinelRef}>
               {filteredUsers()?.map(({
                 email,
                 login: { uuid, username },
@@ -78,11 +77,6 @@ const Contacts = () => {
                   last={last}
                 />
               ))}
-
-              {users?.length === 1000 ? 
-                <Alert className='end-warning' severity='warning'>
-                  End of users catalog.
-                </Alert>: null}
             </InfiniteScroll>
           </div>
         </div>
