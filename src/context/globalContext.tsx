@@ -10,7 +10,7 @@ import {
   useEffect,
 } from 'react'
 
-const defaultState = {
+export const defaultState = {
   user: null,
   setUser: () => {},
   users: [],
@@ -174,4 +174,5 @@ export const GlobalContextProvider = ({ children }: ChildrenType) => {
   return <GlobalContext.Provider value={props}>{children}</GlobalContext.Provider>
 }
 
+export default GlobalContext
 export const useGlobalState = () => useContext(GlobalContext)

@@ -54,8 +54,7 @@ const Settings = () => {
             </MenuItem>
           ))}
         </Select>
-
-        </div>
+      </div>
     </div>
   )
 }
