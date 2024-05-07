@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { debounce } from '@mui/material'
 import { ReactNode, RefObject, useEffect, useRef } from 'react'
 import { useGlobalState } from '../../context/globalContext'
 import { Alert, Button } from '@mui/material'
@@ -11,20 +10,9 @@ interface Props {
   readonly totalResults: number
 }
 
-const InfiniteScroll = ({
-  children,
-  threshold = 0,
-  totalResults,
-  rootSentinelRef,
-}: Props) => {
-  const { 
-    users, 
-    isFetching, 
-    handleFetchUsers, 
-    search, 
-    setShouldShowPrefetched 
-  } = useGlobalState()
-  const tergetSentinelRef = useRef<any>()
+const InfiniteScroll = ({ children, threshold = 0, totalResults, rootSentinelRef }: Props) => {
+  const { users, isFetching, handleFetchUsers, search, setShouldShowPrefetched } = useGlobalState()
+  const tergetSentinelRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const rootSentinel = rootSentinelRef?.current
     const targetSentinel = tergetSentinelRef?.current
@@ -32,19 +20,19 @@ const InfiniteScroll = ({
       async ([entry]) => {
         const parentHeight = rootSentinelRef?.current?.clientHeight
         let childrenHeight = 0
-        rootSentinelRef?.current && Array?.from(rootSentinelRef?.current?.children)?.forEach(
-          (child: any) => (childrenHeight = childrenHeight + child?.clientHeight),
+        rootSentinelRef?.current &&
+          Array?.from(rootSentinelRef?.current?.children)?.forEach(
+            (child: any) => (childrenHeight = childrenHeight + child?.clientHeight),
+          )
+        const isIntersecting = !(
+          childrenHeight >= 50 &&
+          parentHeight &&
+          parentHeight > childrenHeight
         )
-        const isIntersecting = !(childrenHeight >= 50 && (parentHeight && parentHeight > childrenHeight))
 
         if (!isIntersecting) return false
 
-        if (
-          entry.isIntersecting && 
-          totalResults > 0 && 
-          totalResults < 1000 && 
-          !isFetching
-        ) {
+        if (entry.isIntersecting && totalResults > 0 && totalResults < 1000 && !isFetching) {
           setShouldShowPrefetched(true)
           handleFetchUsers(true)
         }
@@ -55,7 +43,9 @@ const InfiniteScroll = ({
       },
     )
     targetSentinel && observer.observe(targetSentinel)
-    return () => targetSentinel && observer.unobserve(targetSentinel)
+    return () => {
+      targetSentinel && observer.unobserve(targetSentinel)
+    }
   }, [threshold, users, isFetching])
 
   return (
@@ -85,20 +75,21 @@ const InfiniteScroll = ({
           />
         )}
 
-        {totalResults < 1000 && search?.length ? 
+        {totalResults < 1000 && search?.length ? (
           <Button
             disabled={isFetching}
             onClick={() => handleFetchUsers(true)}
             style={{ marginTop: '-50px', textTransform: 'capitalize' }}
           >
             Load more users
-          </Button> 
-        : null}
+          </Button>
+        ) : null}
 
-        {totalResults === 1000 ? 
+        {totalResults === 1000 ? (
           <Alert className='end-warning' severity='warning'>
             End of users catalog.
-          </Alert>: null}
+          </Alert>
+        ) : null}
       </div>
     </>
   )

@@ -54,20 +54,20 @@ interface ChildrenType {
 
 interface UserInfo {
   cell: string
-  dob: { date: string, age: number }
+  dob: { date: string; age: number }
   email: string
   gender: string
-  id: { name: string, value: string }
-  location: { 
-    city: string, 
-    coordinates: { latitude: string, longitude: string },
+  id: { name: string; value: string }
+  location: {
+    city: string
+    coordinates: { latitude: string; longitude: string }
     country: string
     postcode: number
     state: string
-    street: { number: number, name: string }
-    timezone: { offset: string, description: string } 
-  },
-  login: { 
+    street: { number: number; name: string }
+    timezone: { offset: string; description: string }
+  }
+  login: {
     md5: string
     password: string
     salt: string
@@ -80,7 +80,7 @@ interface UserInfo {
     title: string
     first: string
     last: string
-  },
+  }
   nat: string
   phone: string
   picture: {
@@ -88,7 +88,7 @@ interface UserInfo {
     medium: string
     thumbnail: string
   }
-  registered: { date: string, age: number }
+  registered: { date: string; age: number }
 }
 
 interface PromiseInfo {
@@ -114,7 +114,7 @@ export const GlobalContextProvider = ({ children }: ChildrenType) => {
   const [users, setUsers] = useState<UserInfo[] | []>([])
   const [user, setUser] = useState<null | string>(null)
   const storageData = JSON.parse(localStorage.getItem('nationalities') as string)
-  const [selectedNationalities, setSelectedNationalities] = useState<string[]>(storageData || []);
+  const [selectedNationalities, setSelectedNationalities] = useState<string[]>(storageData || [])
   const [isFetching, setIsFetching] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
   const [shouldPrefetch, setShouldPrefetch] = useState<boolean>(true)
@@ -124,17 +124,23 @@ export const GlobalContextProvider = ({ children }: ChildrenType) => {
     try {
       const payload = {
         results: 50,
-        nat: selectedNationalities?.length ? selectedNationalities : null
+        nat: selectedNationalities?.length ? selectedNationalities : null,
       }
 
-      const query = Object.keys(payload).map((key: string) => {
-        if (payload[key as keyof QueryPayload]) {
-          return key + '=' + payload[key as keyof QueryPayload]
-        }}
-      )?.join('&');
-      const { data: { results }} = (await axios.get(`https://randomuser.me/api?` + query)) as Awaited<Promise<FetchUserPromise>>
+      const query = Object.keys(payload)
+        .map((key: string) => {
+          if (payload[key as keyof QueryPayload]) {
+            return key + '=' + payload[key as keyof QueryPayload]
+          }
+        })
+        ?.join('&')
+      const {
+        data: { results },
+      } = (await axios.get(`https://randomuser.me/api?` + query)) as Awaited<
+        Promise<FetchUserPromise>
+      >
       !isScrolling && setUser(null)
-      setUsers((current: UserInfo[]) => isScrolling ? [...current, ...results] : results)
+      setUsers((current: UserInfo[]) => (isScrolling ? [...current, ...results] : results))
       setIsFetching(false)
       setShouldShowPrefetched(false)
       setShouldPrefetch(false)
@@ -156,16 +162,16 @@ export const GlobalContextProvider = ({ children }: ChildrenType) => {
   const props = {
     user,
     setUser,
-    users, 
+    users,
     setUsers,
     selectedNationalities,
     setSelectedNationalities,
     isFetching,
     setIsFetching,
     handleFetchUsers,
-    search, 
+    search,
     setSearch,
-    shouldPrefetch, 
+    shouldPrefetch,
     setShouldPrefetch,
     shouldShowPrefetched,
     setShouldShowPrefetched,

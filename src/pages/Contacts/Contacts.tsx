@@ -9,29 +9,20 @@ import ListContact from './ListContact'
 import SingleContactCard from './SingleContactCard'
 
 const Contacts = () => {
-  const { 
-    user, 
-    users, 
-    isFetching,
-    search, 
-    setSearch,
-    shouldShowPrefetched
-  } = useGlobalState()
+  const { user, users, isFetching, search, setSearch, shouldShowPrefetched } = useGlobalState()
   const rootSentinelRef = useRef<HTMLDivElement>(null)
 
   const filteredUsers = () => {
     const prefetchUsers = shouldShowPrefetched ? users : [...users]?.slice(0, -50)
     return prefetchUsers?.filter(({ name: { first, last } }) => {
-      return `${first} ${last}`
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    });
+      return `${first} ${last}`.toLowerCase().includes(search.toLowerCase())
+    })
   }
 
   return (
     <div className='contacts'>
       <PageHeader title='Contacts' />
-      
+
       <div className='contacts__wrapper'>
         <div className='contacts__wrapper-list'>
           <div>
@@ -44,12 +35,13 @@ const Contacts = () => {
                 placeholder='Search users'
                 fullWidth
                 inputProps={{ style: { padding: '30px 10px 30px 30px' } }}
-                InputProps={{ 
-                  disableUnderline: true, 
-                  endAdornment: 
+                InputProps={{
+                  disableUnderline: true,
+                  endAdornment: (
                     <InputAdornment style={{ marginRight: 30 }} position='start'>
                       <Search style={{ fontSize: 30 }} />
                     </InputAdornment>
+                  ),
                 }}
               />
             </form>
@@ -61,22 +53,24 @@ const Contacts = () => {
 
           <div style={{ height: 'calc(100% - 84px)' }}>
             <InfiniteScroll totalResults={users?.length} rootSentinelRef={rootSentinelRef}>
-              {filteredUsers()?.map(({
-                email,
-                login: { uuid, username },
-                picture: { thumbnail },
-                name: { first, last }
-              }) => (
-                <ListContact 
-                  key={uuid}
-                  email={email}
-                  uuid={uuid}
-                  username={username}
-                  thumbnail={thumbnail}
-                  first={first}
-                  last={last}
-                />
-              ))}
+              {filteredUsers()?.map(
+                ({
+                  email,
+                  login: { uuid, username },
+                  picture: { thumbnail },
+                  name: { first, last },
+                }) => (
+                  <ListContact
+                    key={uuid}
+                    email={email}
+                    uuid={uuid}
+                    username={username}
+                    thumbnail={thumbnail}
+                    first={first}
+                    last={last}
+                  />
+                ),
+              )}
             </InfiniteScroll>
           </div>
         </div>

@@ -1,7 +1,7 @@
-import React from 'react';
-import { GlobalContextProvider } from './context/globalContext';
-import Home from './components/Home';
-import { BrowserRouter } from 'react-router-dom';
+import React from 'react'
+import { GlobalContextProvider } from './context/globalContext'
+import Home from './components/Home'
+import { BrowserRouter } from 'react-router-dom'
 
 const App = () => {
   return (
@@ -10,7 +10,7 @@ const App = () => {
         <Home />
       </BrowserRouter>
     </GlobalContextProvider>
-  );
+  )
 }
 
-export default App;
+export default App

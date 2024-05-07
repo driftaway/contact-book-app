@@ -9,9 +9,11 @@ const Settings = () => {
   const { selectedNationalities, setSelectedNationalities } = useGlobalState()
 
   const handleChange = (event: SelectChangeEvent<typeof selectedNationalities>) => {
-    const { target: { value }} = event;
+    const {
+      target: { value },
+    } = event
     setSelectedNationalities(typeof value === 'string' ? value.split(',') : value)
-  };
+  }
 
   return (
     <div className='settings'>
@@ -26,29 +28,25 @@ const Settings = () => {
           onChange={handleChange}
           input={<OutlinedInput style={{ minWidth: 250 }} />}
           renderValue={(selected) => {
-            if (selected?.length === 0) return <em>Select nationalities</em>;
+            if (selected?.length === 0) return <em>Select nationalities</em>
 
             return (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {selected.map((value) => (
-                  <Chip 
-                    style={{ background: '#818cf8', color: '#fff' }} 
-                    key={value} 
-                    label={value} 
+                  <Chip
+                    style={{ background: '#818cf8', color: '#fff' }}
+                    key={value}
+                    label={value}
                   />
                 ))}
               </Box>
-              )
+            )
           }}
         >
-          <MenuItem style={{ display: 'none' }} disabled value=''>
-          </MenuItem>
+          <MenuItem style={{ display: 'none' }} disabled value=''></MenuItem>
 
           {OPTIONS?.map((nationality) => (
-            <MenuItem
-              key={nationality}
-              value={nationality}
-            >
+            <MenuItem key={nationality} value={nationality}>
               {nationality}
             </MenuItem>
           ))}

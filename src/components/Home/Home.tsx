@@ -1,14 +1,13 @@
-import LeftMenu from '../LeftMenu/LeftMenu'
-import TopBar from '../TopBar/TopBar'
+import LeftMenu from '../LeftMenu'
+import Main from '../Main'
 import './Home.scss'
 
 const Home = () => {
-
   return (
     <div className='home'>
       <LeftMenu />
-      
-      <TopBar />
+
+      <Main />
     </div>
   )
 }

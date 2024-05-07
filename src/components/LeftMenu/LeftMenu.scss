@@ -4,6 +4,10 @@
   width: 300px;
   color: #fff;
 
+  > .MuiDivider-root {
+    background-color: rgba(241, 245, 249, 0.12);
+  }
+
   &__header {
     display: flex;
     align-items: center;

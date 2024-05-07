@@ -1,5 +1,5 @@
-import { Avatar } from "@mui/material"
-import { useGlobalState } from "../../context/globalContext"
+import { Avatar } from '@mui/material'
+import { useGlobalState } from '../../context/globalContext'
 
 interface UserData {
   readonly email: string
@@ -23,11 +23,11 @@ const ListContact = (userData: UserData) => {
       </Avatar>
 
       <div className='contacts__wrapper-list-item-details'>
-        <span style={{ fontWeight: 600, fontSize: 20 }}>{`${first} ${last}`}</span>
+        <span>{`${first} ${last}`}</span>
 
-        <span style={{ fontSize: 12, fontWeight: 600 }}>{username}</span>
+        <span>{username}</span>
 
-        <span style={{ fontSize: 12 }}>{email}</span>
+        <span>{email}</span>
       </div>
     </div>
   )
